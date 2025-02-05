@@ -3,13 +3,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export const Login = () => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { toast } = useToast();
 
   const handleLogin = () => {
-    //do login
+    console.log("in login");
+    try {
+      //   const response = await fetch.post("/api/login", {
+      //     email,
+      //     password,
+      //   });
+
+      if (email !== "" && password !== "") {
+        toast({
+          description: "Login Successful",
+        });
+        
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Login Failed",
+          description: "Invalid Credentials",
+        });
+      }
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        description: "Something went wrong",
+      });
+    }
   };
 
   return (
@@ -40,6 +66,7 @@ export const Login = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <Input
+                onChange={(e: any) => setEmail(e.target.value)}
                 id="email"
                 placeholder="m@example.com"
                 type="email"
@@ -51,6 +78,7 @@ export const Login = () => {
             <div className="space-y-2">
               <Input
                 id="password"
+                onChange={(e: any) => setPassword(e.target.value)}
                 placeholder="Password"
                 type="password"
                 autoCapitalize="none"
