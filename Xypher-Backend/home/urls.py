@@ -16,8 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path , include
+from login.views import *
+from login.Trade_views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', include('login.urls'))
+    # path('login/', include('login.urls'))
+    path('authenticate/', login, name="login"),
+    path('add_user/', add_user, name='add_user'),
+    path('get_user/', get_users, name='get_users'),
+
+    path('add_trade/', add_trade, name='add_trade'),
+    path('get_trade/', get_trade, name='get_trade'),
+    path('get_trade_id/<str:trade_id>', get_specific_trade, name='get_specific_trade')
 ]
