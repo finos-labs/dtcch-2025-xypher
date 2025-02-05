@@ -1,9 +1,88 @@
-import React from 'react'
+import { CashFlowCard } from "@/components/CashFlowCard";
+import { FlaggedTradesCard } from "@/components/FlaggedTrades";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { TradeSimulation } from "@/components/TradeSimulation";
+import TradeTable from "@/components/TradeVerificationTable";
+import { Shield } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-const SettlementDashboard = () => {
-  return (
-    <div>SettlementDashboard</div>
-  )
+interface Order {
+  quantity: number;
+  price: number;
 }
 
-export default SettlementDashboard
+function generateRandomOrders(basePrice: number, isAsk: boolean): Order[] {
+  const orders: Order[] = [];
+  const count = 8;
+  const priceRange = isAsk ? [0.5, 3] : [-3, -0.5];
+  const quantityRange = [0.001, 10];
+
+  for (let i = 0; i < count; i++) {
+    const quantity = Number(
+      (
+        Math.random() * (quantityRange[1] - quantityRange[0]) +
+        quantityRange[0]
+      ).toFixed(3)
+    );
+
+    const priceVariation =
+      Math.random() * (priceRange[1] - priceRange[0]) + priceRange[0];
+    const price = Number((basePrice + priceVariation).toFixed(1));
+
+    orders.push({
+      quantity,
+      price,
+    });
+  }
+
+  return orders.sort(() => Math.random() - 0.5);
+}
+const SettlementDashboard = () => {
+  const [basePrice, setBasePrice] = useState(98603.4);
+  const [bids, setBids] = useState<Order[]>([]);
+  const [asks, setAsks] = useState<Order[]>([]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newBasePrice = basePrice + (Math.random() - 0.5) * 5;
+      setBasePrice(newBasePrice);
+
+      setBids(generateRandomOrders(newBasePrice, false));
+      setAsks(generateRandomOrders(newBasePrice, true));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [basePrice]);
+  return (
+    <div className="flex flex-col min-w-[100vw] min-h-[100vh] p-10 overflow-auto ">
+      <h1 className=" self-center px-8 py-6 mb-12 rounded-lg border relative top-1 text-3xl font-bold tracking-tight text-primary self-center">
+        SETTLEMENT DASHBOARD
+      </h1>
+      <div className="flex flex-row gap-5 my-6 flex">
+        <CashFlowCard trend="up" title="Cash Inflow" />
+        <CashFlowCard trend="down" title="Cash Outflow" />
+        <FlaggedTradesCard />
+      </div>
+      <div className="flex flex-row gap-6 h-[50vh] bg-background transition-colors">
+        <div className=" max-w-[100%] min-h-[50vh] max-h-[40vh]  overflow-auto rounded-lg border min-h-screen bg-background">
+          <div className="container flex items-center px-4">
+            <div className="flex items-center space-x-2">
+              <Shield className="mt-6 h-6 w-6" />
+              <h1 className="mt-6 text-xl font-bold">
+                Trade Verification System
+              </h1>
+            </div>
+          </div>
+          <div className="container mx-auto py-8 px-4">
+            <TradeTable />
+          </div>
+        </div>
+        <div className="flex rounded-lg border min-w-fit items-center justify-center p-4">
+          <TradeSimulation bids={bids} asks={asks} spread={basePrice} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SettlementDashboard;

@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     console.log("in login");
@@ -22,7 +24,7 @@ export const Login = () => {
         toast({
           description: "Login Successful",
         });
-        
+        navigate("/dashboard");
       } else {
         toast({
           variant: "destructive",
@@ -40,7 +42,6 @@ export const Login = () => {
 
   return (
     <div className="flex flex-col self-center  items-center justify-center pt-6  p-10 m-2 min-h-[96vh] min-w-[96vw] overflow-hidden">
-      <ThemeToggle />
       <h2 className=" relative top-1 mb-20 text-3xl font-bold tracking-tight text-primary">
         DTCC SETTLEMENT DASHBOARD
       </h2>
@@ -48,7 +49,7 @@ export const Login = () => {
         <div className="space-y-4">
           <div className="space-y-2 text-center">
             <h1 className="text-3xl mb-2 font-semibold tracking-tight">
-              Dashboard Login
+              Login
             </h1>
             <div className=" relative">
               <div className="absolute inset-0 flex items-center">
