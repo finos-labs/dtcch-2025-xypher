@@ -8,34 +8,7 @@ import TradeTable from "@/components/TradeVerificationTable";
 import { Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import apiCall from "@/ApiRequest/ApiCall";
-interface Order {
-  quantity: number;
-  price: number;
-}
 
-function generateRandomOrders(basePrice: number, isAsk: boolean): Order[] {
-  const orders: Order[] = [];
-  const count = 8;
-  const priceRange = isAsk ? [0.5, 3] : [-3, -0.5];
-  const quantityRange = [1, 100];
-
-  for (let i = 0; i < count; i++) {
-    const quantity = Math.round(
-      Math.random() * (quantityRange[1] - quantityRange[0]) + quantityRange[0]
-    );
-
-    const priceVariation =
-      Math.random() * (priceRange[1] - priceRange[0]) + priceRange[0];
-    const price = Number((basePrice + priceVariation).toFixed(1));
-
-    orders.push({
-      quantity,
-      price,
-    });
-  }
-
-  return orders.sort(() => Math.random() - 0.5);
-}
 interface CashFlowData {
   inflow: {
     trend?: string;
@@ -56,52 +29,38 @@ interface CashFlowResponse {
 }
 
 const SettlementDashboard = () => {
-  const [basePrice, setBasePrice] = useState(98603.4);
-  const [bids, setBids] = useState<Order[]>([]);
-  const [asks, setAsks] = useState<Order[]>([]);
   const [cashFlowData, setCashFlowData] = useState<CashFlowResponse>({
     data: [],
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newBasePrice = basePrice + (Math.random() - 0.5) * 5;
-      setBasePrice(newBasePrice);
-
-      setBids(generateRandomOrders(newBasePrice, false));
-      setAsks(generateRandomOrders(newBasePrice, true));
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [basePrice]);
-  useEffect(() => {
     const config = {
-      method: 'POST',
-      url: 'https://c61ifekh20.execute-api.us-west-2.amazonaws.com/inflowOutflow',
+      method: "POST",
+      url: "https://c61ifekh20.execute-api.us-west-2.amazonaws.com/inflowOutflow",
       headers: {
         "Content-Type": "application/json",
       },
       data: {
-        "query": "Give me sample Data",
+        query: "Give me sample Data",
       },
     };
-  
+
     apiCall(config)
-    .then((response) => {
-      try {
-        const responseData = response.data.response.replace(
-          /^.*```json\n/,
-          ""
-        );
-        const parsedData = JSON.parse(responseData);
-        setCashFlowData(parsedData);
-      } catch (error) {
-        console.error("Error parsing JSON:", error);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+      .then((response) => {
+        try {
+          const responseData = response.data.response.replace(
+            /^.*```json\n/,
+            ""
+          );
+          const parsedData = JSON.parse(responseData);
+          setCashFlowData(parsedData);
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
   return (
     <div className="flex flex-col px-4 py-4 w-full min-h-[100vh] gap-4  overflow-y-auto  ">
@@ -109,16 +68,27 @@ const SettlementDashboard = () => {
         SETTLEMENT DASHBOARD
       </h1>
       <div className="flex flex-row gap-4 min-h-fit max-h-[10vh]">
-      <CashFlowCard 
-  trend={cashFlowData[0] && cashFlowData[0].inflow && cashFlowData[0].inflow.trend || "upward"} 
-  title="Cash Inflow" 
-  data={cashFlowData[0] && cashFlowData[0].inflow} 
-/>
-<CashFlowCard 
-  trend={cashFlowData[1] && cashFlowData[1].outflow && cashFlowData[1].outflow.trend || "down"} 
-  title="Cash Outflow" 
-  data={cashFlowData[1] && cashFlowData[1].outflow} 
-/><FlaggedTradesCard />
+        <CashFlowCard
+          trend={
+            (cashFlowData[0] &&
+              cashFlowData[0].inflow &&
+              cashFlowData[0].inflow.trend) ||
+            "upward"
+          }
+          title="Cash Inflow"
+          data={cashFlowData[0] && cashFlowData[0].inflow}
+        />
+        <CashFlowCard
+          trend={
+            (cashFlowData[1] &&
+              cashFlowData[1].outflow &&
+              cashFlowData[1].outflow.trend) ||
+            "down"
+          }
+          title="Cash Outflow"
+          data={cashFlowData[1] && cashFlowData[1].outflow}
+        />
+        <FlaggedTradesCard />
         <HighValueTrades />
       </div>
       <div className="flex flex-row gap-4 w-full h-[100%] min-h-fit bg-background transition-colors">
