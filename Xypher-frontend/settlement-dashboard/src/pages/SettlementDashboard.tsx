@@ -63,8 +63,8 @@ const SettlementDashboard = () => {
         <CashFlowCard trend="down" title="Cash Outflow" />
         <FlaggedTradesCard />
       </div>
-      <div className="flex flex-row gap-6 h-[50vh] bg-background transition-colors">
-        <div className=" max-w-[100%] min-h-[50vh] max-h-[40vh]  overflow-auto rounded-lg border min-h-screen bg-background">
+      <div className="flex flex-row gap-6 min-h-[50vh] bg-background transition-colors">
+        <div className=" max-w-[100%] min-h-[40vh] max-h-[60vh]  overflow-auto rounded-lg border min-h-screen bg-background">
           <div className="container flex items-center px-4">
             <div className="flex items-center space-x-2">
               <Shield className="mt-6 h-6 w-6" />
