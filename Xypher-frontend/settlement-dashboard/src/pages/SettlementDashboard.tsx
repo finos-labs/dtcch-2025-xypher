@@ -1,5 +1,6 @@
 import { CashFlowCard } from "@/components/CashFlowCard";
 import { FlaggedTradesCard } from "@/components/FlaggedTrades";
+import { HighValueTrades } from "@/components/HighValueTrades";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TradeSimulation } from "@/components/TradeSimulation";
 import TradeTable from "@/components/TradeVerificationTable";
@@ -55,10 +56,11 @@ const SettlementDashboard = () => {
       <h1 className=" self-center px-8 py-2 mb-12 rounded-lg relative top-1 text-3xl font-bold tracking-tight text-primary self-center">
         SETTLEMENT DASHBOARD
       </h1>
-      <div className="flex flex-row gap-4 mb-6 w-[99vw]">
+      <div className="flex flex-row gap-4 mb-6 w-[99vw] min-h-fit max-h-[10vh]">
         <CashFlowCard trend="up" title="Cash Inflow" />
         <CashFlowCard trend="down" title="Cash Outflow" />
         <FlaggedTradesCard />
+        <HighValueTrades />
       </div>
       <div className="flex flex-row gap-6 w-[99vw] min-h-[50vh] bg-background transition-colors">
         <div className=" max-w-[100%] min-h-[40vh] max-h-[60vh]  overflow-auto rounded-lg border min-h-screen bg-background">

@@ -83,7 +83,7 @@ export function CashFlowCard({
   return (
     <>
       <Card
-        className="w-full cursor-pointer transition-all hover:shadow-lg"
+        className="w-full min-h-full cursor-pointer transition-all hover:shadow-lg"
         onClick={() => setIsModalOpen(true)}
       >
         <CardContent className="py-2 px-6">
@@ -94,7 +94,7 @@ export function CashFlowCard({
               ) : (
                 <TrendingDown className="h-5 w-5 text-red-500" />
               )}
-              <h3 className="font-semibold text-lg">{title}</h3>
+              <div className="text-2xl font-bold">{title}</div>
             </div>
             <span className="text-sm text-muted-foreground">24h</span>
           </div>
