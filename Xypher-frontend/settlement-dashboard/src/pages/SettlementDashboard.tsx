@@ -16,14 +16,11 @@ function generateRandomOrders(basePrice: number, isAsk: boolean): Order[] {
   const orders: Order[] = [];
   const count = 8;
   const priceRange = isAsk ? [0.5, 3] : [-3, -0.5];
-  const quantityRange = [0.001, 10];
+  const quantityRange = [1, 100];
 
   for (let i = 0; i < count; i++) {
-    const quantity = Number(
-      (
-        Math.random() * (quantityRange[1] - quantityRange[0]) +
-        quantityRange[0]
-      ).toFixed(3)
+    const quantity = Math.round(
+      Math.random() * (quantityRange[1] - quantityRange[0]) + quantityRange[0]
     );
 
     const priceVariation =
@@ -50,22 +47,22 @@ const SettlementDashboard = () => {
 
       setBids(generateRandomOrders(newBasePrice, false));
       setAsks(generateRandomOrders(newBasePrice, true));
-    }, 1000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [basePrice]);
   return (
-    <div className="flex flex-col min-w-[100vw] min-h-[100vh] p-10 overflow-auto ">
-      <h1 className=" self-center px-8 py-6 mb-12 rounded-lg border relative top-1 text-3xl font-bold tracking-tight text-primary self-center">
+    <div className="flex flex-col min-w-[99vw] min-h-[100vh] py-3  overflow-y-auto overflow-x-hidden ">
+      <h1 className=" self-center px-8 py-2 mb-12 rounded-lg relative top-1 text-3xl font-bold tracking-tight text-primary self-center">
         SETTLEMENT DASHBOARD
       </h1>
-      <div className="flex flex-row gap-5 my-6 min-h-fit max-h-[10vh]">
+      <div className="flex flex-row gap-4 mb-6 w-[99vw] min-h-fit max-h-[10vh]">
         <CashFlowCard trend="up" title="Cash Inflow" />
         <CashFlowCard trend="down" title="Cash Outflow" />
         <FlaggedTradesCard />
         <HighValueTrades />
       </div>
-      <div className="flex flex-row gap-6 min-h-[50vh] bg-background transition-colors">
+      <div className="flex flex-row gap-6 w-[99vw] min-h-[50vh] bg-background transition-colors">
         <div className=" max-w-[100%] min-h-[40vh] max-h-[60vh]  overflow-auto rounded-lg border min-h-screen bg-background">
           <div className="container flex items-center px-4">
             <div className="flex items-center space-x-2">
