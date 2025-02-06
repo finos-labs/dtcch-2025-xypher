@@ -1,4 +1,4 @@
-import React, { useMemo,useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ interface TradeSimulationProps {
   spread: number;
 }
 
-export function TradeSimulation({ bids, asks, spread }: TradeSimulationProps) {
+export function TradeSimulation({ bids, asks }: TradeSimulationProps) {
   const bidVolume = useMemo(
     () => bids.reduce((sum, bid) => sum + bid.quantity, 0),
     [bids]
@@ -68,10 +68,9 @@ export function TradeSimulation({ bids, asks, spread }: TradeSimulationProps) {
     //console.log(JSON.stringify(jsonData, null, 2));
   }, [bids, asks]);
   return (
-    <div className="flex flex-col w-full max-w-3xl mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-lg">
+    <div className="flex flex-col w-full max-h-[100%] max-w-3xl mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-lg">
       {/* Header */}
       <h2 className="self-center mb-6 text-3xl font-bold tracking-tight text-primary">
-
         Order Book
       </h2>
       <div className="mb-8">
@@ -112,9 +111,7 @@ export function TradeSimulation({ bids, asks, spread }: TradeSimulationProps) {
                 key={`${bid.price}-${index}`}
                 className="relative hover:bg-transparent border-none group"
               >
-                <TableCell className="font-medium">
-                  {bid.quantity}
-                </TableCell>
+                <TableCell className="font-medium">{bid.quantity}</TableCell>
                 <TableCell className="text-right text-[#00C087]">
                   {bid.price.toLocaleString()}
                   <div
