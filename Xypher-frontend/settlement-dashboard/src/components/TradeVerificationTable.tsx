@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, CheckCircle2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,153 +30,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Trade } from "../../types";
-const trades: Trade[] = [
-  // Active Trades
-  {
-    id: "TR001",
-    counterpartyId: "CP123",
-    securityType: "Equity",
-    tradeType: "Buy", // Changed 'side' to 'tradeType'
-    price: 150.25,
-    timestamp: "2024-03-20T10:30:00",
-    currency: "USD",
-    tradeHistory: "Legitimate",
-    tradeFrequency: "High",
-    marketLiquidity: "Medium",
-    marketVolatility: "Low",
-    status: "active",
-  },
-  {
-    id: "TR002",
-    counterpartyId: "CP456",
-    securityType: "Fixed Income",
-    tradeType: "Sell", // Changed 'side' to 'tradeType'
-    price: 98.75,
-    timestamp: "2024-03-20T11:15:00",
-    currency: "EUR",
-    tradeHistory: "Suspicious",
-    tradeFrequency: "Low",
-    marketLiquidity: "High",
-    marketVolatility: "Medium",
-    status: "active",
-  },
-  {
-    id: "TR003",
-    counterpartyId: "CP789",
-    securityType: "Derivatives",
-    tradeType: "Buy", // Changed 'side' to 'tradeType'
-    price: 25.5,
-    timestamp: "2024-03-20T09:45:00",
-    currency: "GBP",
-    tradeHistory: "Legitimate",
-    tradeFrequency: "Medium",
-    marketLiquidity: "Low",
-    marketVolatility: "High",
-    status: "active",
-  },
-  // Pending Trades
-  {
-    id: "TR004",
-    counterpartyId: "CP234",
-    securityType: "ETF",
-    tradeType: "Buy", // Changed 'side' to 'tradeType'
-    price: 75.3,
-    timestamp: "2024-03-20T14:20:00",
-    currency: "USD",
-    tradeHistory: "Legitimate",
-    tradeFrequency: "High",
-    marketLiquidity: "High",
-    marketVolatility: "Low",
-    status: "pending",
-  },
-  {
-    id: "TR005",
-    counterpartyId: "CP567",
-    securityType: "Forex",
-    tradeType: "Sell", // Changed 'side' to 'tradeType'
-    price: 1.215,
-    timestamp: "2024-03-20T15:45:00",
-    currency: "EUR/USD",
-    tradeHistory: "Suspicious",
-    tradeFrequency: "Very High",
-    marketLiquidity: "Medium",
-    marketVolatility: "High",
-    status: "pending",
-  },
-  {
-    id: "TR006",
-    counterpartyId: "CP890",
-    securityType: "Options",
-    tradeType: "Buy", // Changed 'side' to 'tradeType'
-    price: 3.45,
-    timestamp: "2024-03-20T16:10:00",
-    currency: "JPY",
-    tradeHistory: "Legitimate",
-    tradeFrequency: "Low",
-    marketLiquidity: "Low",
-    marketVolatility: "Medium",
-    status: "pending",
-  },
-  // Historical Trades
-  {
-    id: "TR007",
-    counterpartyId: "CP345",
-    securityType: "Equity",
-    tradeType: "Sell", // Changed 'side' to 'tradeType'
-    price: 200.0,
-    timestamp: "2024-03-19T10:00:00",
-    currency: "USD",
-    tradeHistory: "Legitimate",
-    tradeFrequency: "Medium",
-    marketLiquidity: "High",
-    marketVolatility: "Low",
-    status: "history",
-  },
-  {
-    id: "TR008",
-    counterpartyId: "CP678",
-    securityType: "Bond",
-    tradeType: "Buy", // Changed 'side' to 'tradeType'
-    price: 101.25,
-    timestamp: "2024-03-19T11:30:00",
-    currency: "GBP",
-    tradeHistory: "Legitimate",
-    tradeFrequency: "Low",
-    marketLiquidity: "Medium",
-    marketVolatility: "Low",
-    status: "history",
-  },
-  {
-    id: "TR009",
-    counterpartyId: "CP901",
-    securityType: "Futures",
-    tradeType: "Sell", // Changed 'side' to 'tradeType'
-    price: 45.6,
-    timestamp: "2024-03-19T14:15:00",
-    currency: "USD",
-    tradeHistory: "Suspicious",
-    tradeFrequency: "High",
-    marketLiquidity: "Low",
-    marketVolatility: "Very High",
-    status: "history",
-  },
-  {
-    id: "TR010",
-    counterpartyId: "CP432",
-    securityType: "Swap",
-    tradeType: "Buy", // Changed 'side' to 'tradeType'
-    price: 98.15,
-    timestamp: "2024-03-19T15:45:00",
-    currency: "EUR",
-    tradeHistory: "Legitimate",
-    tradeFrequency: "Medium",
-    marketLiquidity: "Medium",
-    marketVolatility: "Medium",
-    status: "history",
-  },
-];
-
+import axios from "axios";
+import { Trade } from "types";
+import { toast, useToast } from "@/hooks/use-toast";
+import { Toast } from "@radix-ui/react-toast";
 const verificationChecks = [
   {
     id: 1,
@@ -280,6 +137,33 @@ const verificationChecks = [
     },
   },
 ];
+interface RawTradeData {
+  trade_id: string;
+  trade_date: string;
+  execution_time: string;
+  counterparty_1_name: string;
+  counterparty_1_account_id: string;
+  counterparty_1_country: string;
+  counterparty_2_name: string;
+  counterparty_2_account_id: string;
+  counterparty_2_country: string;
+  instrument_type: string;
+  instrument_CUSIP: string;
+  trade_quantity: number;
+  trade_price: string;
+  trade_currency: string;
+  trade_notional_value: string;
+  settlement_date: string;
+  settlement_currency: string;
+  settlement_status: string;
+  clearing_house_source: string;
+  settlement_account_number: string;
+  trade_reference_id: string;
+  source_system: string;
+  last_updated: string;
+  risk_score: string;
+  buy_or_sell: string;
+}
 
 export default function TradeTable() {
   const [selectedTrade, setSelectedTrade] = useState<string | null>(null);
@@ -287,9 +171,95 @@ export default function TradeTable() {
   const [delegatedChecks, setDelegatedChecks] = useState<number[]>([]);
   const [assistClicked, setAssistClicked] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
-  const [selectedSection, setSelectedSection] = useState("active");
+  const [selectedSection, setSelectedSection] = useState("Pending");
+  const [trades, setTrades] = useState<Trade[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const mapApiToTrade = (data: any) => {
+    return {
+      id: data.trade_reference_id,
+      quantity: data.trade_quantity,
+      price: data.trade_price,
+      counterparty_1: data.counterparty_1_account_id,
+      counterparty_2: data.counterparty_2_account_id,
+      execution_time: data.execution_time,
+      instrumentType: data.instrument_CUSIP,
+      currency: data.trade_currency,
+      riskScore: data.risk_score,
+      buy_sell: data.buy_or_sell,
+      status: data.settlement_status,
+    };
+  };
+  //   const transformTradeData = (rawData: RawTradeData): TradeJSON => {
+  //     return {
+  //       trade_id: rawData.trade_id,
+  //       trade_date: rawData.trade_date,
+  //       execution_time: rawData.execution_time,
+  //       counterparty_1: {
+  //         name: rawData.counterparty_1_name,
+  //         account_id: rawData.counterparty_1_account_id,
+  //         country: rawData.counterparty_1_country,
+  //       },
+  //       counterparty_2: {
+  //         name: rawData.counterparty_2_name,
+  //         account_id: rawData.counterparty_2_account_id,
+  //         country: rawData.counterparty_2_country,
+  //       },
+  //       instrument: {
+  //         type: rawData.instrument_type,
+  //         symbol: rawData.instrument_CUSIP, // Assuming the CUSIP represents the symbol
+  //         ISIN: rawData.instrument_CUSIP, // Assuming the CUSIP is used as ISIN here
+  //       },
+  //       trade_details: {
+  //         quantity: rawData.trade_quantity,
+  //         price: parseFloat(rawData.trade_price),
+  //         trade_currency: rawData.trade_currency,
+  //         notional_value: parseFloat(rawData.trade_notional_value),
+  //       },
+  //       settlement_details: {
+  //         settlement_date: rawData.settlement_date,
+  //         settlement_currency: rawData.settlement_currency,
+  //         status: rawData.settlement_status,
+  //         settlement_instructions: {
+  //           bank_name: rawData.clearing_house_source, // Assuming clearing house source as bank name
+  //           account_number: rawData.settlement_account_number,
+  //         },
+  //       },
+  //       trade_metadata: {
+  //         trade_reference_id: rawData.trade_reference_id,
+  //         source_system: rawData.source_system,
+  //         last_updated: rawData.last_updated,
+  //         risk_score: parseFloat(rawData.risk_score),
+  //       },
+  //     };
+  //   };
+
+  //   console.log("Trade", trades);
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get("http://34.210.26.211:8000/get_trade/")
+      .then((response) => {
+        setTrades(
+          response.data.map((data: RawTradeData) => mapApiToTrade(data))
+        );
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleAssist = () => {
+    // axios
+    //   .post(
+    //     "https://dap2brd807.execute-api.us-west-2.amazonaws.com/tradeVerification",
+    //     transformTradeData(
+    //       tempTrades.filter(
+    //         (trade) => trade.trade_reference_id === selectedTrade
+    //       )[0]
+    //     )
+    //   )
+    //   .then((resp) => console.log(JSON.parse(resp.data.response)));
     setShowAnimation(true);
     setTimeout(() => {
       setShowAnimation(false);
@@ -300,10 +270,35 @@ export default function TradeTable() {
       setAssistClicked(true);
     }, 1500);
   };
+  const handleSubmitApproval = () => {
+    setShowAnimation(true);
+    setTimeout(() => {
+      setShowAnimation(false);
+      const autoVerifiableChecks = verificationChecks
+        .filter((check) => check.autoVerifiable)
+        .map((check) => check.id);
+      setVerifiedChecks(autoVerifiableChecks);
+      setAssistClicked(true);
+      setTrades((prev) =>
+        prev.map((trade) => {
+          if (trade.id === selectedTrade) trade.status = "Failed";
+          return trade;
+        })
+      );
+      setSelectedTrade("");
+    }, 1500);
+  };
 
-  const handleDelegate = (checkId: number, e: React.MouseEvent) => {
+  const handleDelegate = (
+    check: (typeof verificationChecks)[0],
+    e: React.MouseEvent
+  ) => {
     e.stopPropagation();
-    setDelegatedChecks([...delegatedChecks, checkId]);
+    setDelegatedChecks([...delegatedChecks, check.id]);
+    toast({
+      title: `Task ${check.title} delegated`,
+      description: `Task ${check.title} for ${check.description} has been delegated to concerned groups`,
+    });
   };
 
   const renderActiveCheckStatus = (check: (typeof verificationChecks)[0]) => {
@@ -329,7 +324,7 @@ export default function TradeTable() {
           <Button
             variant="outline"
             size="sm"
-            onClick={(e) => handleDelegate(check.id, e)}
+            onClick={(e) => handleDelegate(check, e)}
           >
             Delegate
           </Button>
@@ -387,11 +382,11 @@ export default function TradeTable() {
     section: string
   ) => {
     switch (section) {
-      case "active":
+      case "Pending":
         return renderActiveCheckStatus(check);
-      case "pending":
+      case "Failed":
         return renderPendingCheckStatus(check);
-      case "history":
+      case "Completed":
         return renderHistoryCheckStatus(check);
       default:
         return null;
@@ -401,7 +396,7 @@ export default function TradeTable() {
   return (
     <div className="space-y-4">
       <Tabs
-        defaultValue="active"
+        defaultValue="Pending"
         className="w-full"
         onValueChange={(value) => {
           setSelectedSection(value);
@@ -411,11 +406,11 @@ export default function TradeTable() {
         }}
       >
         <TabsList className="grid max-w-[50vw] mt-2 mb-6 h-10 py-0 w-full grid-cols-3 gap-3">
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="Pending">Active</TabsTrigger>
+          <TabsTrigger value="Failed">Pending</TabsTrigger>
+          <TabsTrigger value="Completed">History</TabsTrigger>
         </TabsList>
-        {["active", "pending", "history"].map((status) => (
+        {["Pending", "Failed", "Completed"].map((status) => (
           <TabsContent key={status} value={status}>
             <div className="rounded-md border">
               <Table>
@@ -423,49 +418,59 @@ export default function TradeTable() {
                   <TableRow>
                     <TableHead className="w-[100px]">Actions</TableHead>
                     <TableHead>Trade ID</TableHead>
-                    <TableHead>Counterparty ID</TableHead>
-                    <TableHead>Security Type</TableHead>
-                    <TableHead>Trade Type</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Timestamp</TableHead>
-                    <TableHead>Currency</TableHead>
-                    <TableHead>Trade History</TableHead>
-                    <TableHead>Trade Frequency</TableHead>
-                    <TableHead>Market Liquidity</TableHead>
-                    <TableHead>Market Volatility</TableHead>
+                    <TableHead>TRADE QUANTITY</TableHead>
+                    <TableHead>PRICE</TableHead>
+                    <TableHead>COUNTERPARTY_1</TableHead>
+                    <TableHead>COUNTERPARTY_2</TableHead>
+                    <TableHead>EXECUTION TIME</TableHead>
+                    <TableHead>INSTRUMENT TYPE</TableHead>
+                    <TableHead>CURRENCY</TableHead>
+                    <TableHead>RISK SCORE</TableHead>
+                    <TableHead>BUY/SELL</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
-                  {trades
-                    .filter((trade) => trade.status === status)
-                    .map((trade) => (
-                      <TableRow key={trade.id}>
-                        <TableCell>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedTrade(trade.id)}
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            View
-                          </Button>
-                        </TableCell>
-                        <TableCell>{trade.id}</TableCell>
-                        <TableCell>{trade.counterpartyId}</TableCell>
-                        <TableCell>{trade.securityType}</TableCell>
-                        <TableCell>{trade.tradeType}</TableCell>
-                        <TableCell>{trade.price}</TableCell>
-                        <TableCell>
-                          {new Date(trade.timestamp).toLocaleString()}
-                        </TableCell>
-                        <TableCell>{trade.currency}</TableCell>
-                        <TableCell>{trade.tradeHistory}</TableCell>
-                        <TableCell>{trade.tradeFrequency}</TableCell>
-                        <TableCell>{trade.marketLiquidity}</TableCell>
-                        <TableCell>{trade.marketVolatility}</TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
+                {loading ? (
+                  <div justify-center items-center>
+                    {" "}
+                    Loading ...{" "}
+                  </div>
+                ) : (
+                  <TableBody>
+                    {trades
+                      .filter((trade) => {
+                        return trade.status === status;
+                      })
+                      .map((trade) => {
+                        console.log("Hello", trade);
+                        return (
+                          <TableRow key={trade.id}>
+                            <TableCell>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setSelectedTrade(trade.id)}
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                View
+                              </Button>
+                            </TableCell>
+                            <TableCell>{trade.id}</TableCell>
+                            <TableCell>{trade.quantity}</TableCell>
+                            <TableCell>{trade.price}</TableCell>
+                            <TableCell>{trade.counterparty_1}</TableCell>
+                            <TableCell>{trade.counterparty_2}</TableCell>
+                            <TableCell>
+                              {new Date(trade.execution_time).toLocaleString()}
+                            </TableCell>
+                            <TableCell>{trade.instrumentType}</TableCell>
+                            <TableCell>{trade.currency}</TableCell>
+                            <TableCell>{trade.riskScore}</TableCell>
+                            <TableCell>{trade.buy_sell}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                )}
               </Table>
             </div>
           </TabsContent>
@@ -481,7 +486,7 @@ export default function TradeTable() {
           setDelegatedChecks([]);
         }}
       >
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-auto">
           <DialogHeader>
             <DialogTitle>Trade Verification Checks</DialogTitle>
           </DialogHeader>
@@ -491,7 +496,7 @@ export default function TradeTable() {
                 <AccordionItem
                   key={check.id}
                   value={`check-${check.id}`}
-                  className="border rounded-lg px-4"
+                  className="border rounded-lg p-2"
                 >
                   <AccordionTrigger className="hover:no-underline">
                     <div className="flex items-center space-x-2">
@@ -508,10 +513,16 @@ export default function TradeTable() {
               ))}
             </Accordion>
           </div>
-          {selectedSection === "active" && (
-            <div className="mt-4 flex justify-end">
+          {selectedSection === "Pending" && (
+            <div className="mt-4 gap-4 flex justify-end">
+              <Button
+                onClick={handleSubmitApproval}
+                disabled={delegatedChecks.length < 3}
+              >
+                Submit For Approval
+              </Button>
               <Button onClick={handleAssist} disabled={showAnimation}>
-                Assist
+                AI Assist
               </Button>
             </div>
           )}

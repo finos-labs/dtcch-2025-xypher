@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -7,19 +7,58 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import React from "react";
 
 interface Order {
   quantity: number;
   price: number;
 }
 
-interface TradeSimulationProps {
-  bids: Order[];
-  asks: Order[];
-  spread: number;
+interface Order {
+  quantity: number;
+  price: number;
 }
 
-export function TradeSimulation({ bids, asks }: TradeSimulationProps) {
+function generateRandomOrders(basePrice: number, isAsk: boolean): Order[] {
+  const orders: Order[] = [];
+  const count = 8;
+  const priceRange = isAsk ? [0.5, 3] : [-3, -0.5];
+  const quantityRange = [1, 100];
+
+  for (let i = 0; i < count; i++) {
+    const quantity = Math.round(
+      Math.random() * (quantityRange[1] - quantityRange[0]) + quantityRange[0]
+    );
+
+    const priceVariation =
+      Math.random() * (priceRange[1] - priceRange[0]) + priceRange[0];
+    const price = Number((basePrice + priceVariation).toFixed(1));
+
+    orders.push({
+      quantity,
+      price,
+    });
+  }
+
+  return orders.sort(() => Math.random() - 0.5);
+}
+const TradeSimulationComponent = () => {
+  const [basePrice, setBasePrice] = useState(98603.4);
+  const [bids, setBids] = useState<Order[]>([]);
+  const [asks, setAsks] = useState<Order[]>([]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newBasePrice = basePrice + (Math.random() - 0.5) * 5;
+      setBasePrice(newBasePrice);
+
+      setBids(generateRandomOrders(newBasePrice, false));
+      setAsks(generateRandomOrders(newBasePrice, true));
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [basePrice]);
+
   const bidVolume = useMemo(
     () => bids.reduce((sum, bid) => sum + bid.quantity, 0),
     [bids]
@@ -60,13 +99,7 @@ export function TradeSimulation({ bids, asks }: TradeSimulationProps) {
     if (askStats.max === askStats.min) return 100;
     return ((price - askStats.min) / (askStats.max - askStats.min)) * 100;
   };
-  useEffect(() => {
-    const jsonData = {
-      buy: bids,
-      sell: asks,
-    };
-    console.log(JSON.stringify(jsonData, null, 2));
-  }, [bids, asks]);
+
   return (
     <div className="flex flex-col w-full max-h-[100%] max-w-3xl mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-lg">
       {/* Header */}
@@ -163,4 +196,7 @@ export function TradeSimulation({ bids, asks }: TradeSimulationProps) {
       </div>
     </div>
   );
-}
+};
+
+// Memoizing the component
+export const TradeSimulation = React.memo(TradeSimulationComponent);

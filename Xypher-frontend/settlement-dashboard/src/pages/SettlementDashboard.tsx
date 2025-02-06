@@ -6,74 +6,8 @@ import { HighValueTrades } from "@/components/HighValueTrades";
 import { TradeSimulation } from "@/components/TradeSimulation";
 import TradeTable from "@/components/TradeVerificationTable";
 import { Shield } from "lucide-react";
-import { useEffect, useState } from "react";
-import apiCall from "@/ApiRequest/ApiCall";
-interface Order {
-  quantity: number;
-  price: number;
-}
 
-function generateRandomOrders(basePrice: number, isAsk: boolean): Order[] {
-  const orders: Order[] = [];
-  const count = 8;
-  const priceRange = isAsk ? [0.5, 3] : [-3, -0.5];
-  const quantityRange = [1, 100];
-
-  for (let i = 0; i < count; i++) {
-    const quantity = Math.round(
-      Math.random() * (quantityRange[1] - quantityRange[0]) + quantityRange[0]
-    );
-
-    const priceVariation =
-      Math.random() * (priceRange[1] - priceRange[0]) + priceRange[0];
-    const price = Number((basePrice + priceVariation).toFixed(1));
-
-    orders.push({
-      quantity,
-      price,
-    });
-  }
-
-  return orders.sort(() => Math.random() - 0.5);
-}
 const SettlementDashboard = () => {
-  const [basePrice, setBasePrice] = useState(98603.4);
-  const [bids, setBids] = useState<Order[]>([]);
-  const [asks, setAsks] = useState<Order[]>([]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newBasePrice = basePrice + (Math.random() - 0.5) * 5;
-      setBasePrice(newBasePrice);
-
-      setBids(generateRandomOrders(newBasePrice, false));
-      setAsks(generateRandomOrders(newBasePrice, true));
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [basePrice]);
-  useEffect(() => {
-    const config = {
-      method: "GET",
-      url: "http://34.217.144.50:8000/get_user",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
-        // "status": "approved",
-        // "message": "Detailed message mentioning trade metadara and status.",
-        // "recipient_email": "vatsalkumar14@gmail.com"
-      },
-    };
-
-    apiCall(config)
-      .then((response) => {
-        console.log("himanshu", response.data);
-      })
-      .catch((error) => {
-        console.error("vatsal", error);
-      });
-  }, []);
   return (
     <div className="flex flex-col px-4 py-4 w-full min-h-[100vh] gap-4  overflow-y-auto  ">
       <h1 className=" self-center px-8 py-8 mb-12 rounded-lg relative top-1 text-4xl font-bold tracking-tight text-primary self-center">
@@ -86,7 +20,7 @@ const SettlementDashboard = () => {
         <HighValueTrades />
       </div>
       <div className="flex flex-row gap-4 w-full h-[100%] min-h-fit bg-background transition-colors">
-        <div className="  grow-3 h-[100%] overflow-auto rounded-lg border bg-background">
+        <div className="  grow-3 h-[100%] max-h-[50vh] overflow-auto rounded-lg border bg-background">
           <div className="container flex items-center px-4">
             <div className="flex items-center space-x-2">
               <Shield className="mt-6 h-6 w-6" />
@@ -100,7 +34,7 @@ const SettlementDashboard = () => {
           </div>
         </div>
         <div className=" grow-1 flex rounded-lg border  min-w-fit items-center justify-center p-4">
-          <TradeSimulation bids={bids} asks={asks} spread={basePrice} />
+          <TradeSimulation />
         </div>
       </div>
       <div className=" max-w-[100%] min-h-[40vh] max-h-[60vh] px-6 overflow-auto rounded-lg border min-h-fit bg-background">

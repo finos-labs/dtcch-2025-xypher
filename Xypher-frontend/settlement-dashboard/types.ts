@@ -2,20 +2,18 @@
 
 export type Trade = {
   id: string;
-  counterpartyId: string;
-  securityType: string;
-  tradeType?: "Buy" | "Sell";
+  quantity: number;
   price: number;
-  timestamp: string;
+  counterparty_1: string;
+  counterparty_2: string;
+  execution_time?: string;
+  instrumentType?: string;
   currency?: string;
-  tradeHistory?: string;
-  tradeFrequency?: string;
-  marketLiquidity?: string;
-  marketVolatility?: string;
+  riskScore?: number;
+  buy_sell?: string;
   status?: string;
 };
 export type flaggedTrade = Trade & {
   quantity: number;
 };
 
-export type HighValueTrade = Trade & { quantity: number };

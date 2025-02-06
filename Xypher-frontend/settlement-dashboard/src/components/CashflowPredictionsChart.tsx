@@ -77,7 +77,7 @@ export function CashFlowChart() {
         </div>
 
         <Tabs defaultValue="day" className="w-full">
-          <TabsList className="mb-4">
+          <TabsList className="grid max-w-[50vw] mt-2 mb-6 h-10 py-0 max-w-fit grid-cols-2 gap-2">
             <TabsTrigger value="day">Today</TabsTrigger>
             <TabsTrigger value="week">This Week</TabsTrigger>
           </TabsList>
