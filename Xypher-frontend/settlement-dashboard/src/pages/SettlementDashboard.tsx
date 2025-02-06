@@ -3,11 +3,10 @@ import { CashFlowChart } from "@/components/CashflowPredictionsChart";
 import { TradeErrorsChart } from "@/components/ErrorDetectionTypes";
 import { FlaggedTradesCard } from "@/components/FlaggedTrades";
 import { HighValueTrades } from "@/components/HighValueTrades";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { TradeSimulation } from "@/components/TradeSimulation";
 import TradeTable from "@/components/TradeVerificationTable";
 import { Shield } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import apiCall from "@/ApiRequest/ApiCall";
 interface Order {
   quantity: number;
@@ -55,10 +54,10 @@ const SettlementDashboard = () => {
   }, [basePrice]);
   useEffect(() => {
     const config = {
-      method: 'GET',
-      url: 'http://ec2-35-89-82-37.us-west-2.compute.amazonaws.com:8000/get_user',
+      method: "GET",
+      url: "http://34.217.144.50:8000/get_user",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       data: {
         // "status": "approved",
@@ -69,10 +68,10 @@ const SettlementDashboard = () => {
 
     apiCall(config)
       .then((response) => {
-        console.log("himanshu",response.data);
+        console.log("himanshu", response.data);
       })
       .catch((error) => {
-        console.error("vatsal",error);
+        console.error("vatsal", error);
       });
   }, []);
   return (
@@ -86,8 +85,8 @@ const SettlementDashboard = () => {
         <FlaggedTradesCard />
         <HighValueTrades />
       </div>
-      <div className="flex flex-row gap-4 w-full max-h-[60vh] bg-background transition-colors">
-        <div className="  grow-3 min-h-[40vh] max-h-[60vh]  overflow-auto rounded-lg border bg-background">
+      <div className="flex flex-row gap-4 w-full h-[100%] min-h-fit bg-background transition-colors">
+        <div className="  grow-3 h-[100%] overflow-auto rounded-lg border bg-background">
           <div className="container flex items-center px-4">
             <div className="flex items-center space-x-2">
               <Shield className="mt-6 h-6 w-6" />
@@ -96,7 +95,7 @@ const SettlementDashboard = () => {
               </h1>
             </div>
           </div>
-          <div className="container mx-auto py-8 px-4 overflow-y-auto">
+          <div className="max-h-[100%] container mx-auto py-8 px-4 overflow-y-auto">
             <TradeTable />
           </div>
         </div>

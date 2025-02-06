@@ -12,9 +12,7 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
+  Tooltip
 } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useTheme } from "./theme-provider";

@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { DollarSign, Clock, BarChart3 } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { HighValueTrade } from "../../types";
 const trades: HighValueTrade[] = [
