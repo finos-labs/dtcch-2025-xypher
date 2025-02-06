@@ -12,18 +12,18 @@ def add_trade(request):
     if serializer.is_valid():
         serializer.save()
         return Response(status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST,headers={'Access-Control-Allow-Origin': '*'})
 
 @api_view(['GET'])
 def get_trade(request):
     trade = Trade.objects.all()
     serializer = TradeSerializer(trade, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK,headers={'Access-Control-Allow-Origin': '*'})
 
 @api_view(['GET'])
 def get_specific_trade(request, trade_id):
     trade = get_object_or_404(Trade, trade_id=trade_id)
     serializer = TradeSerializer(trade)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK,headers={'Access-Control-Allow-Origin': '*'})
 
    

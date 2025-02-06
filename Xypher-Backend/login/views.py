@@ -10,13 +10,13 @@ def add_user(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-    return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_200_OK, headers={'Access-Control-Allow-Origin': '*'})
 
 @api_view(['GET'])
 def get_users(request):
     user = User.objects.all()
     serializer = UserSerializer(user, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK, headers={'Access-Control-Allow-Origin': '*'})
 
 @api_view(['POST'])
 def login(request):
@@ -28,6 +28,6 @@ def login(request):
         "username": user.username,
         "role": user.role
     }
-    return Response(user_data, status=status.HTTP_200_OK)
+    return Response(user_data, status=status.HTTP_200_OK,headers={'Access-Control-Allow-Origin': '*'})
 
 
