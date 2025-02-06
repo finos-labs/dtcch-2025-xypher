@@ -16,7 +16,7 @@ def add_trade(request):
 
 @api_view(['GET'])
 def get_trade(request):
-    trade = Trade.objects.all()
+    trade = Trade.objects.all()[:100]
     serializer = TradeSerializer(trade, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK,headers={'Access-Control-Allow-Origin': '*'})
 
