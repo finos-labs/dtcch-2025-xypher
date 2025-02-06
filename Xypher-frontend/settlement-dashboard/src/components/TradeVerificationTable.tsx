@@ -30,14 +30,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-
-const trades = [
+import { Trade } from "../../types";
+const trades: Trade[] = [
   // Active Trades
   {
     id: "TR001",
     counterpartyId: "CP123",
     securityType: "Equity",
-    side: "Buy",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
     price: 150.25,
     timestamp: "2024-03-20T10:30:00",
     currency: "USD",
@@ -51,7 +51,7 @@ const trades = [
     id: "TR002",
     counterpartyId: "CP456",
     securityType: "Fixed Income",
-    side: "Sell",
+    tradeType: "Sell", // Changed 'side' to 'tradeType'
     price: 98.75,
     timestamp: "2024-03-20T11:15:00",
     currency: "EUR",
@@ -65,7 +65,7 @@ const trades = [
     id: "TR003",
     counterpartyId: "CP789",
     securityType: "Derivatives",
-    side: "Buy",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
     price: 25.5,
     timestamp: "2024-03-20T09:45:00",
     currency: "GBP",
@@ -80,7 +80,7 @@ const trades = [
     id: "TR004",
     counterpartyId: "CP234",
     securityType: "ETF",
-    side: "Buy",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
     price: 75.3,
     timestamp: "2024-03-20T14:20:00",
     currency: "USD",
@@ -94,7 +94,7 @@ const trades = [
     id: "TR005",
     counterpartyId: "CP567",
     securityType: "Forex",
-    side: "Sell",
+    tradeType: "Sell", // Changed 'side' to 'tradeType'
     price: 1.215,
     timestamp: "2024-03-20T15:45:00",
     currency: "EUR/USD",
@@ -108,7 +108,7 @@ const trades = [
     id: "TR006",
     counterpartyId: "CP890",
     securityType: "Options",
-    side: "Buy",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
     price: 3.45,
     timestamp: "2024-03-20T16:10:00",
     currency: "JPY",
@@ -123,7 +123,7 @@ const trades = [
     id: "TR007",
     counterpartyId: "CP345",
     securityType: "Equity",
-    side: "Sell",
+    tradeType: "Sell", // Changed 'side' to 'tradeType'
     price: 200.0,
     timestamp: "2024-03-19T10:00:00",
     currency: "USD",
@@ -137,7 +137,7 @@ const trades = [
     id: "TR008",
     counterpartyId: "CP678",
     securityType: "Bond",
-    side: "Buy",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
     price: 101.25,
     timestamp: "2024-03-19T11:30:00",
     currency: "GBP",
@@ -151,7 +151,7 @@ const trades = [
     id: "TR009",
     counterpartyId: "CP901",
     securityType: "Futures",
-    side: "Sell",
+    tradeType: "Sell", // Changed 'side' to 'tradeType'
     price: 45.6,
     timestamp: "2024-03-19T14:15:00",
     currency: "USD",
@@ -165,7 +165,7 @@ const trades = [
     id: "TR010",
     counterpartyId: "CP432",
     securityType: "Swap",
-    side: "Buy",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
     price: 98.15,
     timestamp: "2024-03-19T15:45:00",
     currency: "EUR",
@@ -425,7 +425,7 @@ export default function TradeTable() {
                     <TableHead>Trade ID</TableHead>
                     <TableHead>Counterparty ID</TableHead>
                     <TableHead>Security Type</TableHead>
-                    <TableHead>Side</TableHead>
+                    <TableHead>Trade Type</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Timestamp</TableHead>
                     <TableHead>Currency</TableHead>
@@ -453,7 +453,7 @@ export default function TradeTable() {
                         <TableCell>{trade.id}</TableCell>
                         <TableCell>{trade.counterpartyId}</TableCell>
                         <TableCell>{trade.securityType}</TableCell>
-                        <TableCell>{trade.side}</TableCell>
+                        <TableCell>{trade.tradeType}</TableCell>
                         <TableCell>{trade.price}</TableCell>
                         <TableCell>
                           {new Date(trade.timestamp).toLocaleString()}

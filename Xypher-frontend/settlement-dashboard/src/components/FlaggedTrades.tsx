@@ -16,11 +16,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-// Mock data for demonstration
-const mockFlaggedTrades = [
+import { flaggedTrade } from "types";
+const mockFlaggedTrades: flaggedTrade[] = [
   {
-    tradeId: "T123",
+    id: "T123",
     counterpartyId: "CP456",
     securityType: "Equity",
     price: 150.25,
@@ -28,7 +27,7 @@ const mockFlaggedTrades = [
     timestamp: "2024-03-20T10:30:00Z",
   },
   {
-    tradeId: "T124",
+    id: "T124",
     counterpartyId: "CP789",
     securityType: "Bond",
     price: 98.75,
@@ -36,7 +35,7 @@ const mockFlaggedTrades = [
     timestamp: "2024-03-20T11:15:00Z",
   },
   {
-    tradeId: "T125",
+    id: "T125",
     counterpartyId: "CP234",
     securityType: "Options",
     price: 5.75,
@@ -44,7 +43,7 @@ const mockFlaggedTrades = [
     timestamp: "2024-03-20T12:45:00Z",
   },
   {
-    tradeId: "T126",
+    id: "T126",
     counterpartyId: "CP567",
     securityType: "Futures",
     price: 2750.5,
@@ -52,7 +51,7 @@ const mockFlaggedTrades = [
     timestamp: "2024-03-20T13:20:00Z",
   },
   {
-    tradeId: "T127",
+    id: "T127",
     counterpartyId: "CP890",
     securityType: "ETF",
     price: 45.8,
@@ -60,7 +59,7 @@ const mockFlaggedTrades = [
     timestamp: "2024-03-20T14:10:00Z",
   },
   {
-    tradeId: "T128",
+    id: "T128",
     counterpartyId: "CP123",
     securityType: "Forex",
     price: 1.25,
@@ -68,7 +67,7 @@ const mockFlaggedTrades = [
     timestamp: "2024-03-20T15:05:00Z",
   },
   {
-    tradeId: "T129",
+    id: "T129",
     counterpartyId: "CP345",
     securityType: "Commodity",
     price: 1850.75,
@@ -76,7 +75,7 @@ const mockFlaggedTrades = [
     timestamp: "2024-03-20T15:45:00Z",
   },
   {
-    tradeId: "T130",
+    id: "T130",
     counterpartyId: "CP678",
     securityType: "Corporate Bond",
     price: 102.25,
@@ -84,7 +83,7 @@ const mockFlaggedTrades = [
     timestamp: "2024-03-20T16:30:00Z",
   },
   {
-    tradeId: "T131",
+    id: "T131",
     counterpartyId: "CP901",
     securityType: "Municipal Bond",
     price: 99.5,
@@ -92,7 +91,7 @@ const mockFlaggedTrades = [
     timestamp: "2024-03-20T17:15:00Z",
   },
   {
-    tradeId: "T132",
+    id: "T132",
     counterpartyId: "CP432",
     securityType: "Treasury",
     price: 97.25,
@@ -131,7 +130,7 @@ export function FlaggedTradesCard() {
           </CardContent>
         </Card>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl  max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Flag className="h-5 w-5 text-red-500" />
@@ -153,8 +152,8 @@ export function FlaggedTradesCard() {
             </TableHeader>
             <TableBody>
               {mockFlaggedTrades.map((trade) => (
-                <TableRow key={trade.tradeId}>
-                  <TableCell className="font-medium">{trade.tradeId}</TableCell>
+                <TableRow key={trade.id}>
+                  <TableCell className="font-medium">{trade.id}</TableCell>
                   <TableCell>{trade.counterpartyId}</TableCell>
                   <TableCell>{trade.securityType}</TableCell>
                   <TableCell>${trade.price.toFixed(2)}</TableCell>
@@ -166,7 +165,7 @@ export function FlaggedTradesCard() {
                     <Button
                       size="sm"
                       onClick={() => {
-                        console.log(`Investigating trade ${trade.tradeId}`);
+                        console.log(`Investigating trade ${trade.id}`);
                       }}
                     >
                       Investigate
