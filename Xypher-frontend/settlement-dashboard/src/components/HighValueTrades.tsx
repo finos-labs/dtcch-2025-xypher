@@ -19,8 +19,8 @@ import { useToast } from "@/hooks/use-toast";
 import { DollarSign, Clock, BarChart3 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { DialogTrigger } from "@radix-ui/react-dialog";
-
-const trades = [
+import { HighValueTrade } from "../../types";
+const trades: HighValueTrade[] = [
   {
     id: "T123",
     counterpartyId: "CP456",
@@ -141,7 +141,7 @@ export const HighValueTrades = () => {
                 <TableHead>Trade ID</TableHead>
                 <TableHead>Counterparty ID</TableHead>
                 <TableHead>Security Type</TableHead>
-                <TableHead>Buy/Sell</TableHead>
+                <TableHead>Trade Type</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Quantity</TableHead>
                 <TableHead>Timestamp</TableHead>
