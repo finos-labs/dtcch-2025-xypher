@@ -1,4 +1,5 @@
 import { CashFlowCard } from "@/components/CashFlowCard";
+import { TradeErrorsChart } from "@/components/ErrorDetectionTypes";
 import { FlaggedTradesCard } from "@/components/FlaggedTrades";
 import { HighValueTrades } from "@/components/HighValueTrades";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -81,6 +82,12 @@ const SettlementDashboard = () => {
         </div>
         <div className="flex rounded-lg border min-w-fit items-center justify-center p-4">
           <TradeSimulation bids={bids} asks={asks} spread={basePrice} />
+        </div>
+      </div>
+      <div className=" max-w-[100%] min-h-[40vh] max-h-[60vh]  overflow-auto rounded-lg border min-h-screen bg-background">
+        <h1 className="mt-6 text-xl font-bold">AI Predcitions</h1>
+        <div className="flex flex-row gap-5 my-6 min-h-fit max-h-[10vh]">
+          <TradeErrorsChart />
         </div>
       </div>
     </div>
