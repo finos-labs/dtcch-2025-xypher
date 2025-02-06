@@ -86,8 +86,8 @@ export function CashFlowCard({
         className="w-full cursor-pointer transition-all hover:shadow-lg"
         onClick={() => setIsModalOpen(true)}
       >
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
+        <CardContent className="py-2 px-6">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               {trend === "up" ? (
                 <TrendingUp className="h-5 w-5 text-green-500" />

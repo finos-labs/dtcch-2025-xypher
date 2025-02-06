@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo,useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -60,7 +60,13 @@ export function TradeSimulation({ bids, asks, spread }: TradeSimulationProps) {
     if (askStats.max === askStats.min) return 100;
     return ((price - askStats.min) / (askStats.max - askStats.min)) * 100;
   };
-
+  useEffect(() => {
+    const jsonData = {
+      buy: bids,
+      sell: asks,
+    };
+    console.log(JSON.stringify(jsonData, null, 2));
+  }, [bids, asks]);
   return (
     <div className="flex flex-col w-full max-w-3xl mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-lg">
       {/* Header */}
@@ -107,7 +113,7 @@ export function TradeSimulation({ bids, asks, spread }: TradeSimulationProps) {
                 className="relative hover:bg-transparent border-none group"
               >
                 <TableCell className="font-medium">
-                  {bid.quantity.toFixed(3)}
+                  {bid.quantity}
                 </TableCell>
                 <TableCell className="text-right text-[#00C087]">
                   {bid.price.toLocaleString()}
@@ -145,7 +151,7 @@ export function TradeSimulation({ bids, asks, spread }: TradeSimulationProps) {
                   {ask.price.toLocaleString()}
                 </TableCell>
                 <TableCell className="text-right font-medium">
-                  {ask.quantity.toFixed(3)}
+                  {ask.quantity}
                   <div
                     className="absolute left-0 top-0 h-full bg-[#FF5C5C]/10 group-hover:bg-[#FF5C5C]/20 transition-all"
                     style={{
