@@ -1,4 +1,4 @@
-import { ThemeToggle } from "@/components/theme-toggle";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -13,7 +13,7 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    console.log("in login");
+    //console.log("in login");
     try {
       //   const response = await fetch.post("/api/login", {
       //     email,

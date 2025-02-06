@@ -165,7 +165,7 @@ export function FlaggedTradesCard() {
                     <Button
                       size="sm"
                       onClick={() => {
-                        console.log(`Investigating trade ${trade.id}`);
+                        //console.log(`Investigating trade ${trade.id}`);
                       }}
                     >
                       Investigate

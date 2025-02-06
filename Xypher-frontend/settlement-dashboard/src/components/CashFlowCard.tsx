@@ -12,9 +12,7 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
+  Tooltip
 } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useTheme } from "./theme-provider";
@@ -45,12 +43,20 @@ const mockData = {
   ],
 };
 
+
 export function CashFlowCard({
   title,
-  trend = "up",
+  trend = "upward",
+  data,
 }: {
   title: string;
   trend: string;
+  data: {
+    trend?: string;
+    "24h": { time: string; amount: number }[];
+    "1week": { time: string; amount: number }[];
+    "1month": { time: string; amount: number }[];
+  };
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("24h");
@@ -67,7 +73,7 @@ export function CashFlowCard({
   };
 
   // Calculate total for last 24h
-  const total24h = mockData["24h"].reduce((sum, item) => sum + item.amount, 0);
+  const total24h = data ? data["24h"].reduce((sum, item) => sum + item.amount, 0): mockData["24h"].reduce((sum, item) => sum + item.amount, 0);
 
   // Theme-aware colors
   const gridColor =
@@ -79,7 +85,7 @@ export function CashFlowCard({
       color: "hsl(var(--chart-1))",
     },
   } satisfies ChartConfig;
-
+  console.log("himanshu",data)
   return (
     <>
       <Card
@@ -89,7 +95,7 @@ export function CashFlowCard({
         <CardContent className="py-2 px-6">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              {trend === "up" ? (
+              {trend === "upward" ? (
                 <TrendingUp className="h-5 w-5 text-green-500" />
               ) : (
                 <TrendingDown className="h-5 w-5 text-red-500" />
@@ -120,7 +126,7 @@ export function CashFlowCard({
               <TabsTrigger value="1week">Last Week</TabsTrigger>
               <TabsTrigger value="1month">Last Month</TabsTrigger>
             </TabsList>
-            {Object.entries(mockData).map(([period, data]) => (
+            {Object.entries(data ? data : mockData).map(([period, data]) => (
               <TabsContent key={period} value={period}>
                 <div className="h-[300px] mt-4 ">
                   <ChartContainer className="max-h-full" config={chartConfig}>
