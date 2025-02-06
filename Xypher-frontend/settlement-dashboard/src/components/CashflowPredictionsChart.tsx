@@ -1,5 +1,6 @@
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useEffect, useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   BarChart,
   Bar,
@@ -8,39 +9,31 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-} from "recharts";
-import { TrendingUpIcon as ArrowTrendingUpIcon } from "lucide-react";
+} from 'recharts';
+import { TrendingUpIcon as ArrowTrendingUpIcon } from 'lucide-react';
+import apiCall from '@/ApiRequest/ApiCall';
 
 interface CashFlow {
   name: string;
   inflow: number;
   outflow: number;
+  net_flow: number;
 }
 
-const dailyData: CashFlow[] = [
-  { name: "9 AM", inflow: 45000, outflow: 22000 },
-  { name: "11 AM", inflow: 82000, outflow: 43000 },
-  { name: "1 PM", inflow: 67000, outflow: 31000 },
-  { name: "3 PM", inflow: 34000, outflow: 44000 },
-  { name: "5 PM", inflow: 56000, outflow: 28000 },
-];
-
-const weeklyData: CashFlow[] = [
-  { name: "Mon", inflow: 245000, outflow: 122000 },
-  { name: "Tue", inflow: 382000, outflow: 243000 },
-  { name: "Wed", inflow: 267000, outflow: 131000 },
-  { name: "Thu", inflow: 334000, outflow: 244000 },
-  { name: "Fri", inflow: 456000, outflow: 328000 },
-];
-
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
 };
+
+interface ResponseData {
+  predicted_inflows: number;
+  predicted_outflows: number;
+  net_flow:number;
+}
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -53,6 +46,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="text-sm text-destructive">
           Outflow: {formatCurrency(payload[1].value)}
         </p>
+        <p className="text-sm text-primary">
+          Netflow: {formatCurrency(payload[2].value)}
+        </p>
       </div>
     );
   }
@@ -60,6 +56,47 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export function CashFlowChart() {
+  const [data, setData] = useState<CashFlow[]>([]);
+
+  useEffect(() => {
+    const config = {
+      method: 'POST',
+      url: 'https://okaa2ys1d8.execute-api.us-west-2.amazonaws.com/liquidity-forecast-lambda',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        query: 'Get me data in said format',
+      },
+    };
+
+    apiCall(config)
+      .then((response) => {
+        try {
+          const responseData = response.data.response.replace(
+            /^.*```json\n/,
+            ''
+          );
+          const parsedData: ResponseData[] = JSON.parse(responseData);
+          console.log(parsedData);
+
+          const chartData = parsedData.map((item, index) => ({
+            name: `Day ${index + 1}`,
+            inflow: item.predicted_inflows,
+            outflow: item.predicted_outflows,
+            net_flow: item. net_flow,
+          }));
+
+          setData(chartData);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
+      })
+      .catch((error) => {
+        console.error('vatsal', error);
+      });
+  }, []);
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <div className="p-6">
@@ -77,16 +114,16 @@ export function CashFlowChart() {
         </div>
 
         <Tabs defaultValue="day" className="w-full">
-          <TabsList className="mb-4">
+          {/* <TabsList className="mb-4">
             <TabsTrigger value="day">Today</TabsTrigger>
             <TabsTrigger value="week">This Week</TabsTrigger>
-          </TabsList>
+          </TabsList> */}
 
           <TabsContent value="day" className="mt-0">
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={dailyData}
+                  data={data}
                   margin={{ top: 20, right: 30, left: 40, bottom: 20 }}
                 >
                   <CartesianGrid
@@ -107,57 +144,71 @@ export function CashFlowChart() {
                   <Bar
                     dataKey="outflow"
                     fill="hsl(var(--destructive))"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+                    radius={[4, 4,0,0]}
+                    />
+                     <Bar
+                    dataKey="net_flow"
+                    fill="hsl(var(--blue))"
+                    radius={[4, 4,0,0]}
+                    />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </TabsContent>
+    
+              <TabsContent value="week" className="mt-0">
+                <div className="h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={data}
+                      margin={{ top: 20, right: 30, left: 40, bottom: 20 }}
+                    >
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        className="stroke-muted"
+                      />
+                      <XAxis dataKey="name" className="text-xs" />
+                      <YAxis
+                        tickFormatter={(value) => `$${value / 1000}k`}
+                        className="text-xs"
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Bar
+                        dataKey="inflow"
+                        fill="hsl(var(--primary))"
+                        radius={[4, 4, 0, 0]}
+                      />
+                      <Bar
+                        dataKey="outflow"
+                        fill="hsl(var(--destructive))"
+                        radius={[4, 4, 0, 0]}
+                      />
+                       <Bar
+                    dataKey="net_flow"
+                    fill="hsl(var(--secondary))"
+                    radius={[4, 4,0,0]}
+                    />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </TabsContent>
+            </Tabs>
+    
+            <div className="flex items-center justify-center gap-8 mt-6">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-primary" />
+                <span className="text-sm">Cash Inflow</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-destructive" />
+                <span className="text-sm">Cash Outflow</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-secondary" />
+                <span className="text-sm">Net Flow</span>
+              </div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="week" className="mt-0">
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={weeklyData}
-                  margin={{ top: 20, right: 30, left: 40, bottom: 20 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    className="stroke-muted"
-                  />
-                  <XAxis dataKey="name" className="text-xs" />
-                  <YAxis
-                    tickFormatter={(value) => `$${value / 1000}k`}
-                    className="text-xs"
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey="inflow"
-                    fill="hsl(var(--primary))"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="outflow"
-                    fill="hsl(var(--destructive))"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        <div className="flex items-center justify-center gap-8 mt-6">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-primary" />
-            <span className="text-sm">Cash Inflow</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-destructive" />
-            <span className="text-sm">Cash Outflow</span>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
+        </Card>
+      );
+    }

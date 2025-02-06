@@ -65,7 +65,7 @@ export function TradeSimulation({ bids, asks, spread }: TradeSimulationProps) {
       buy: bids,
       sell: asks,
     };
-    console.log(JSON.stringify(jsonData, null, 2));
+    //console.log(JSON.stringify(jsonData, null, 2));
   }, [bids, asks]);
   return (
     <div className="flex flex-col w-full max-w-3xl mx-auto bg-card text-card-foreground p-6 rounded-lg shadow-lg">

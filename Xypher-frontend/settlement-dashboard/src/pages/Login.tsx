@@ -13,7 +13,7 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    console.log("in login");
+    //console.log("in login");
     try {
       //   const response = await fetch.post("/api/login", {
       //     email,

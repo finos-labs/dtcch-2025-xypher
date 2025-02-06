@@ -37,10 +37,32 @@ function generateRandomOrders(basePrice: number, isAsk: boolean): Order[] {
 
   return orders.sort(() => Math.random() - 0.5);
 }
+interface CashFlowData {
+  inflow: {
+    trend?: string;
+    "24h": { time: string; amount: number }[];
+    "1week": { time: string; amount: number }[];
+    "1month": { time: string; amount: number }[];
+  };
+  outflow: {
+    trend?: string;
+    "24h": { time: string; amount: number }[];
+    "1week": { time: string; amount: number }[];
+    "1month": { time: string; amount: number }[];
+  };
+}
+
+interface CashFlowResponse {
+  data: CashFlowData[];
+}
+
 const SettlementDashboard = () => {
   const [basePrice, setBasePrice] = useState(98603.4);
   const [bids, setBids] = useState<Order[]>([]);
   const [asks, setAsks] = useState<Order[]>([]);
+  const [cashFlowData, setCashFlowData] = useState<CashFlowResponse>({
+    data: [],
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,25 +77,32 @@ const SettlementDashboard = () => {
   }, [basePrice]);
   useEffect(() => {
     const config = {
-      method: 'GET',
-      url: 'http://ec2-35-89-82-37.us-west-2.compute.amazonaws.com:8000/get_user',
+      method: 'POST',
+      url: 'https://c61ifekh20.execute-api.us-west-2.amazonaws.com/inflowOutflow',
       headers: {
         'Content-Type': 'application/json',
       },
       data: {
-        // "status": "approved",
-        // "message": "Detailed message mentioning trade metadara and status.",
-        // "recipient_email": "vatsalkumar14@gmail.com"
+        "query": "Give me sample Data",
       },
     };
-
+  
     apiCall(config)
-      .then((response) => {
-        console.log("himanshu",response.data);
-      })
-      .catch((error) => {
-        console.error("vatsal",error);
-      });
+    .then((response) => {
+      try {
+        const responseData = response.data.response.replace(
+          /^.*```json\n/,
+          ""
+        );
+        const parsedData = JSON.parse(responseData);
+        setCashFlowData(parsedData);
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
   }, []);
   return (
     <div className="flex flex-col px-4 py-4 w-full min-h-[100vh] gap-4  overflow-y-auto  ">
@@ -81,9 +110,16 @@ const SettlementDashboard = () => {
         SETTLEMENT DASHBOARD
       </h1>
       <div className="flex flex-row gap-4 min-h-fit max-h-[10vh]">
-        <CashFlowCard trend="up" title="Cash Inflow" />
-        <CashFlowCard trend="down" title="Cash Outflow" />
-        <FlaggedTradesCard />
+      <CashFlowCard 
+  trend={cashFlowData[0] && cashFlowData[0].inflow && cashFlowData[0].inflow.trend || "upward"} 
+  title="Cash Inflow" 
+  data={cashFlowData[0] && cashFlowData[0].inflow} 
+/>
+<CashFlowCard 
+  trend={cashFlowData[1] && cashFlowData[1].outflow && cashFlowData[1].outflow.trend || "down"} 
+  title="Cash Outflow" 
+  data={cashFlowData[1] && cashFlowData[1].outflow} 
+/><FlaggedTradesCard />
         <HighValueTrades />
       </div>
       <div className="flex flex-row gap-4 w-full max-h-[60vh] bg-background transition-colors">
