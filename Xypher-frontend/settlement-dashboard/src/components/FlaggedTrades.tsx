@@ -110,7 +110,7 @@ export function FlaggedTradesCard() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Card className="w-full cursor-pointer transition-all hover:shadow-lg">
+        <Card className="w-full min-h-full cursor-pointer transition-all hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-2xl font-bold">
               <div className="flex items-center gap-2">
@@ -120,10 +120,14 @@ export function FlaggedTradesCard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockFlaggedTrades.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Total Volume: ${totalVolume.toLocaleString()}
-            </p>
+            <div className="space-y-1">
+              <p className="text-2xl font-bold text-red-500">
+                {mockFlaggedTrades.length}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Total Volume: ${totalVolume.toLocaleString()}
+              </p>
+            </div>
           </CardContent>
         </Card>
       </DialogTrigger>
