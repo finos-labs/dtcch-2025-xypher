@@ -94,7 +94,7 @@ export function CashFlowCard({
               ) : (
                 <TrendingDown className="h-5 w-5 text-red-500" />
               )}
-              <div className="text-2xl font-bold">{title}</div>
+              <div className="text-xl font-bold">{title}</div>
             </div>
             <span className="text-sm text-muted-foreground">24h</span>
           </div>

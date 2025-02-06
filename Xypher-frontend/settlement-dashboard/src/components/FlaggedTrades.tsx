@@ -112,7 +112,7 @@ export function FlaggedTradesCard() {
       <DialogTrigger asChild>
         <Card className="w-full min-h-full cursor-pointer transition-all hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-xl font-bold">
               <div className="flex items-center gap-2">
                 <Flag className="h-6 w-6 text-red-500" />
                 Flagged Trades

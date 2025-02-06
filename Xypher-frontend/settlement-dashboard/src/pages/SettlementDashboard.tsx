@@ -6,7 +6,7 @@ import { TradeSimulation } from "@/components/TradeSimulation";
 import TradeTable from "@/components/TradeVerificationTable";
 import { Shield } from "lucide-react";
 import React, { useEffect, useState } from "react";
-
+import apiCall from "@/ApiRequest/ApiCall";
 interface Order {
   quantity: number;
   price: number;
@@ -51,6 +51,28 @@ const SettlementDashboard = () => {
 
     return () => clearInterval(interval);
   }, [basePrice]);
+  useEffect(() => {
+    const config = {
+      method: 'GET',
+      url: 'http://ec2-35-89-82-37.us-west-2.compute.amazonaws.com:8000/get_user',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: {
+        // "status": "approved",
+        // "message": "Detailed message mentioning trade metadara and status.",
+        // "recipient_email": "vatsalkumar14@gmail.com"
+      },
+    };
+
+    apiCall(config)
+      .then((response) => {
+        console.log("himanshu",response.data);
+      })
+      .catch((error) => {
+        console.error("vatsal",error);
+      });
+  }, []);
   return (
     <div className="flex flex-col min-w-[99vw] min-h-[100vh] py-3  overflow-y-auto overflow-x-hidden ">
       <h1 className=" self-center px-8 py-2 mb-12 rounded-lg relative top-1 text-3xl font-bold tracking-tight text-primary self-center">
