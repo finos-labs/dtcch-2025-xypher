@@ -16,96 +16,191 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { flaggedTrade } from "types";
-const mockFlaggedTrades: flaggedTrade[] = [
+import { Trade } from "types";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+const mockFlaggedTrades: Trade[] = [
+  // Active Trades
   {
-    id: "T123",
-    counterpartyId: "CP456",
+    id: "TR001",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
     securityType: "Equity",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
     price: 150.25,
-    quantity: 1000,
-    timestamp: "2024-03-20T10:30:00Z",
+    timestamp: "2024-03-20T10:30:00",
+    currency: "USD",
+    tradeHistory: "Legitimate",
+    tradeFrequency: "High",
+    marketLiquidity: "Medium",
+    marketVolatility: "Low",
+    status: "active",
+    quantity: 100000000,
   },
   {
-    id: "T124",
-    counterpartyId: "CP789",
-    securityType: "Bond",
+    id: "TR002",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
+    securityType: "Fixed Income",
+    tradeType: "Sell", // Changed 'side' to 'tradeType'
     price: 98.75,
-    quantity: 5000,
-    timestamp: "2024-03-20T11:15:00Z",
+    timestamp: "2024-03-20T11:15:00",
+    currency: "EUR",
+    tradeHistory: "Suspicious",
+    tradeFrequency: "Low",
+    marketLiquidity: "High",
+    marketVolatility: "Medium",
+    status: "active",
+    quantity: 100020000,
   },
   {
-    id: "T125",
-    counterpartyId: "CP234",
-    securityType: "Options",
-    price: 5.75,
-    quantity: 10000,
-    timestamp: "2024-03-20T12:45:00Z",
+    id: "TR003",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
+    securityType: "Derivatives",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
+    price: 25.5,
+    timestamp: "2024-03-20T09:45:00",
+    currency: "GBP",
+    tradeHistory: "Legitimate",
+    tradeFrequency: "Medium",
+    marketLiquidity: "Low",
+    marketVolatility: "High",
+    status: "active",
+    quantity: 102003000,
   },
+  // Pending Trades
   {
-    id: "T126",
-    counterpartyId: "CP567",
-    securityType: "Futures",
-    price: 2750.5,
-    quantity: 50,
-    timestamp: "2024-03-20T13:20:00Z",
-  },
-  {
-    id: "T127",
-    counterpartyId: "CP890",
+    id: "TR004",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
     securityType: "ETF",
-    price: 45.8,
-    quantity: 3000,
-    timestamp: "2024-03-20T14:10:00Z",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
+    price: 75.3,
+    timestamp: "2024-03-20T14:20:00",
+    currency: "USD",
+    tradeHistory: "Legitimate",
+    tradeFrequency: "High",
+    marketLiquidity: "High",
+    marketVolatility: "Low",
+    status: "pending",
+    quantity: 123020000,
   },
   {
-    id: "T128",
-    counterpartyId: "CP123",
+    id: "TR005",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
     securityType: "Forex",
-    price: 1.25,
-    quantity: 1000000,
-    timestamp: "2024-03-20T15:05:00Z",
+    tradeType: "Sell", // Changed 'side' to 'tradeType'
+    price: 1.215,
+    timestamp: "2024-03-20T15:45:00",
+    currency: "EUR/USD",
+    tradeHistory: "Suspicious",
+    tradeFrequency: "Very High",
+    marketLiquidity: "Medium",
+    marketVolatility: "High",
+    status: "pending",
+    quantity: 123020000,
   },
   {
-    id: "T129",
-    counterpartyId: "CP345",
-    securityType: "Commodity",
-    price: 1850.75,
-    quantity: 100,
-    timestamp: "2024-03-20T15:45:00Z",
+    id: "TR006",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
+    securityType: "Options",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
+    price: 3.45,
+    timestamp: "2024-03-20T16:10:00",
+    currency: "JPY",
+    tradeHistory: "Legitimate",
+    tradeFrequency: "Low",
+    marketLiquidity: "Low",
+    marketVolatility: "Medium",
+    status: "pending",
+    quantity: 123020120,
+  },
+  // Historical Trades
+  {
+    id: "TR007",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
+    securityType: "Equity",
+    tradeType: "Sell", // Changed 'side' to 'tradeType'
+    price: 200.0,
+    timestamp: "2024-03-19T10:00:00",
+    currency: "USD",
+    tradeHistory: "Legitimate",
+    tradeFrequency: "Medium",
+    marketLiquidity: "High",
+    marketVolatility: "Low",
+    status: "history",
+    quantity: 123320120,
   },
   {
-    id: "T130",
-    counterpartyId: "CP678",
-    securityType: "Corporate Bond",
-    price: 102.25,
-    quantity: 2500,
-    timestamp: "2024-03-20T16:30:00Z",
+    id: "TR008",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
+    securityType: "Bond",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
+    price: 101.25,
+    timestamp: "2024-03-19T11:30:00",
+    currency: "GBP",
+    tradeHistory: "Legitimate",
+    tradeFrequency: "Low",
+    marketLiquidity: "Medium",
+    marketVolatility: "Low",
+    status: "history",
+    quantity: 122220120,
   },
   {
-    id: "T131",
-    counterpartyId: "CP901",
-    securityType: "Municipal Bond",
-    price: 99.5,
-    quantity: 3500,
-    timestamp: "2024-03-20T17:15:00Z",
+    id: "TR009",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
+    securityType: "Futures",
+    tradeType: "Sell", // Changed 'side' to 'tradeType'
+    price: 45.6,
+    timestamp: "2024-03-19T14:15:00",
+    currency: "USD",
+    tradeHistory: "Suspicious",
+    tradeFrequency: "High",
+    marketLiquidity: "Low",
+    marketVolatility: "Very High",
+    status: "history",
+    quantity: 122220120,
   },
   {
-    id: "T132",
-    counterpartyId: "CP432",
-    securityType: "Treasury",
-    price: 97.25,
-    quantity: 7500,
-    timestamp: "2024-03-20T17:45:00Z",
+    id: "TR010",
+    counterparty_1: "CP123",
+    counterparty_2: "CP122",
+    securityType: "Swap",
+    tradeType: "Buy", // Changed 'side' to 'tradeType'
+    price: 98.15,
+    timestamp: "2024-03-19T15:45:00",
+    currency: "EUR",
+    tradeHistory: "Legitimate",
+    tradeFrequency: "Medium",
+    marketLiquidity: "Medium",
+    marketVolatility: "Medium",
+    status: "history",
+    quantity: 122225030,
   },
 ];
-
 const totalVolume = mockFlaggedTrades.reduce(
-  (acc, trade) => acc + trade.price * trade.quantity,
+  (acc, trade) => acc + trade.price * (trade.quantity || 0),
   0
 );
 
 export function FlaggedTradesCard() {
+  const { toast } = useToast();
+  const [investigate, setInvestigate] = useState<Set<string>>(new Set());
+  const handleInvestigate = (tradeId: string) => {
+    toast({
+      title: "Investigation Initiated",
+      description: `Trade details for ${tradeId} communicated to operational manager`,
+      duration: 3000,
+    });
+    setInvestigate((prev) => new Set([...prev, tradeId]));
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -154,21 +249,27 @@ export function FlaggedTradesCard() {
               {mockFlaggedTrades.map((trade) => (
                 <TableRow key={trade.id}>
                   <TableCell className="font-medium">{trade.id}</TableCell>
-                  <TableCell>{trade.counterpartyId}</TableCell>
+                  <TableCell>{trade.counterparty_1}</TableCell>
                   <TableCell>{trade.securityType}</TableCell>
                   <TableCell>${trade.price.toFixed(2)}</TableCell>
-                  <TableCell>{trade.quantity.toLocaleString()}</TableCell>
+                  <TableCell>
+                    {(trade?.quantity || 0).toLocaleString()}
+                  </TableCell>
                   <TableCell>
                     {new Date(trade.timestamp).toLocaleString()}
                   </TableCell>
                   <TableCell>
                     <Button
                       size="sm"
-                      onClick={() => {
-                        //console.log(`Investigating trade ${trade.id}`);
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleInvestigate(trade.id);
                       }}
+                      disabled={investigate.has(trade.id)}
                     >
-                      Investigate
+                      {investigate.has(trade.id)
+                        ? "Under Investigation"
+                        : "Investigate"}
                     </Button>
                   </TableCell>
                 </TableRow>

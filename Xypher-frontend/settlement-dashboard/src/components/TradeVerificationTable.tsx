@@ -34,6 +34,7 @@ import axios from "axios";
 import { Trade } from "types";
 import { toast, useToast } from "@/hooks/use-toast";
 import { Toast } from "@radix-ui/react-toast";
+
 const verificationChecks = [
   {
     id: 1,
@@ -137,33 +138,33 @@ const verificationChecks = [
     },
   },
 ];
-interface RawTradeData {
-  trade_id: string;
-  trade_date: string;
-  execution_time: string;
-  counterparty_1_name: string;
-  counterparty_1_account_id: string;
-  counterparty_1_country: string;
-  counterparty_2_name: string;
-  counterparty_2_account_id: string;
-  counterparty_2_country: string;
-  instrument_type: string;
-  instrument_CUSIP: string;
-  trade_quantity: number;
-  trade_price: string;
-  trade_currency: string;
-  trade_notional_value: string;
-  settlement_date: string;
-  settlement_currency: string;
-  settlement_status: string;
-  clearing_house_source: string;
-  settlement_account_number: string;
-  trade_reference_id: string;
-  source_system: string;
-  last_updated: string;
-  risk_score: string;
-  buy_or_sell: string;
-}
+// interface RawTradeData {
+//   trade_id: string;
+//   trade_date: string;
+//   execution_time: string;
+//   counterparty_1_name: string;
+//   counterparty_1_account_id: string;
+//   counterparty_1_country: string;
+//   counterparty_2_name: string;
+//   counterparty_2_account_id: string;
+//   counterparty_2_country: string;
+//   instrument_type: string;
+//   instrument_CUSIP: string;
+//   trade_quantity: number;
+//   trade_price: string;
+//   trade_currency: string;
+//   trade_notional_value: string;
+//   settlement_date: string;
+//   settlement_currency: string;
+//   settlement_status: string;
+//   clearing_house_source: string;
+//   settlement_account_number: string;
+//   trade_reference_id: string;
+//   source_system: string;
+//   last_updated: string;
+//   risk_score: string;
+//   buy_or_sell: string;
+// }
 
 export default function TradeTable() {
   const [selectedTrade, setSelectedTrade] = useState<string | null>(null);
@@ -171,26 +172,181 @@ export default function TradeTable() {
   const [delegatedChecks, setDelegatedChecks] = useState<number[]>([]);
   const [assistClicked, setAssistClicked] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
-  const [selectedSection, setSelectedSection] = useState("Pending");
-  const [trades, setTrades] = useState<Trade[]>([]);
+  const [selectedSection, setSelectedSection] = useState("active");
+  // const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const trades: Trade[] = [
+    // Active Trades
+    {
+      id: "TR001",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "Equity",
+      tradeType: "Buy", // Changed 'side' to 'tradeType'
+      price: 150.25,
+      timestamp: "2024-03-20T10:30:00",
+      currency: "USD",
+      tradeHistory: "Legitimate",
+      tradeFrequency: "High",
+      marketLiquidity: "Medium",
+      marketVolatility: "Low",
+      status: "active",
+    },
+    {
+      id: "TR002",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "Fixed Income",
+      tradeType: "Sell", // Changed 'side' to 'tradeType'
+      price: 98.75,
+      timestamp: "2024-03-20T11:15:00",
+      currency: "EUR",
+      tradeHistory: "Suspicious",
+      tradeFrequency: "Low",
+      marketLiquidity: "High",
+      marketVolatility: "Medium",
+      status: "active",
+    },
+    {
+      id: "TR003",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "Derivatives",
+      tradeType: "Buy", // Changed 'side' to 'tradeType'
+      price: 25.5,
+      timestamp: "2024-03-20T09:45:00",
+      currency: "GBP",
+      tradeHistory: "Legitimate",
+      tradeFrequency: "Medium",
+      marketLiquidity: "Low",
+      marketVolatility: "High",
+      status: "active",
+    },
+    // Pending Trades
+    {
+      id: "TR004",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "ETF",
+      tradeType: "Buy", // Changed 'side' to 'tradeType'
+      price: 75.3,
+      timestamp: "2024-03-20T14:20:00",
+      currency: "USD",
+      tradeHistory: "Legitimate",
+      tradeFrequency: "High",
+      marketLiquidity: "High",
+      marketVolatility: "Low",
+      status: "pending",
+    },
+    {
+      id: "TR005",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "Forex",
+      tradeType: "Sell", // Changed 'side' to 'tradeType'
+      price: 1.215,
+      timestamp: "2024-03-20T15:45:00",
+      currency: "EUR/USD",
+      tradeHistory: "Suspicious",
+      tradeFrequency: "Very High",
+      marketLiquidity: "Medium",
+      marketVolatility: "High",
+      status: "pending",
+    },
+    {
+      id: "TR006",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "Options",
+      tradeType: "Buy", // Changed 'side' to 'tradeType'
+      price: 3.45,
+      timestamp: "2024-03-20T16:10:00",
+      currency: "JPY",
+      tradeHistory: "Legitimate",
+      tradeFrequency: "Low",
+      marketLiquidity: "Low",
+      marketVolatility: "Medium",
+      status: "pending",
+    },
+    // Historical Trades
+    {
+      id: "TR007",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "Equity",
+      tradeType: "Sell", // Changed 'side' to 'tradeType'
+      price: 200.0,
+      timestamp: "2024-03-19T10:00:00",
+      currency: "USD",
+      tradeHistory: "Legitimate",
+      tradeFrequency: "Medium",
+      marketLiquidity: "High",
+      marketVolatility: "Low",
+      status: "history",
+    },
+    {
+      id: "TR008",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "Bond",
+      tradeType: "Buy", // Changed 'side' to 'tradeType'
+      price: 101.25,
+      timestamp: "2024-03-19T11:30:00",
+      currency: "GBP",
+      tradeHistory: "Legitimate",
+      tradeFrequency: "Low",
+      marketLiquidity: "Medium",
+      marketVolatility: "Low",
+      status: "history",
+    },
+    {
+      id: "TR009",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "Futures",
+      tradeType: "Sell", // Changed 'side' to 'tradeType'
+      price: 45.6,
+      timestamp: "2024-03-19T14:15:00",
+      currency: "USD",
+      tradeHistory: "Suspicious",
+      tradeFrequency: "High",
+      marketLiquidity: "Low",
+      marketVolatility: "Very High",
+      status: "history",
+    },
+    {
+      id: "TR010",
+      counterparty_1: "CP123",
+      counterparty_2: "CP122",
+      securityType: "Swap",
+      tradeType: "Buy", // Changed 'side' to 'tradeType'
+      price: 98.15,
+      timestamp: "2024-03-19T15:45:00",
+      currency: "EUR",
+      tradeHistory: "Legitimate",
+      tradeFrequency: "Medium",
+      marketLiquidity: "Medium",
+      marketVolatility: "Medium",
+      status: "history",
+    },
+  ];
 
-  const mapApiToTrade = (data: any) => {
-    return {
-      id: data.trade_reference_id,
-      quantity: data.trade_quantity,
-      price: data.trade_price,
-      counterparty_1: data.counterparty_1_account_id,
-      counterparty_2: data.counterparty_2_account_id,
-      execution_time: data.execution_time,
-      instrumentType: data.instrument_CUSIP,
-      currency: data.trade_currency,
-      riskScore: data.risk_score,
-      buy_sell: data.buy_or_sell,
-      status: data.settlement_status,
-    };
-  };
+  // const mapApiToTrade = (data: any) => {
+  //   return {
+  //     id: data.trade_reference_id,
+  //     quantity: data.trade_quantity,
+  //     price: data.trade_price,
+  //     counterparty_1: data.counterparty_1_account_id,
+  //     counterparty_2: data.counterparty_2_account_id,
+  //     execution_time: data.execution_time,
+  //     instrumentType: data.instrument_CUSIP,
+  //     currency: data.trade_currency,
+  //     riskScore: data.risk_score,
+  //     buy_sell: data.buy_or_sell,
+  //     status: data.settlement_status,
+  //   };
+  // };
   //   const transformTradeData = (rawData: RawTradeData): TradeJSON => {
   //     return {
   //       trade_id: rawData.trade_id,
@@ -237,16 +393,18 @@ export default function TradeTable() {
 
   //   console.log("Trade", trades);
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get("http://34.210.26.211:8000/get_trade/")
-      .then((response) => {
-        setTrades(
-          response.data.map((data: RawTradeData) => mapApiToTrade(data))
-        );
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
+    // setLoading(true);
+    // setTrades(trades);
+    //     .get("http://34.210.26.211:8000/get_trade/")
+    //     .then((response) => {
+    //       setTrades(
+    //         response.data.map((data: RawTradeData) => mapApiToTrade(data))
+    //       );
+    //     })
+    //     .catch((err) => {
+    //       console.error(err);
+    //     })
+    // .finally(() => setLoading(false));
   }, []);
 
   const handleAssist = () => {
@@ -279,12 +437,12 @@ export default function TradeTable() {
         .map((check) => check.id);
       setVerifiedChecks(autoVerifiableChecks);
       setAssistClicked(true);
-      setTrades((prev) =>
-        prev.map((trade) => {
-          if (trade.id === selectedTrade) trade.status = "Failed";
-          return trade;
-        })
-      );
+      // setTrades((prev) =>
+      //   prev.map((trade) => {
+      //     if (trade.id === selectedTrade) trade.status = "Failed";
+      //     return trade;
+      //   })
+      // );
       setSelectedTrade("");
     }, 1500);
   };
@@ -382,11 +540,11 @@ export default function TradeTable() {
     section: string
   ) => {
     switch (section) {
-      case "Pending":
+      case "active":
         return renderActiveCheckStatus(check);
-      case "Failed":
+      case "pending":
         return renderPendingCheckStatus(check);
-      case "Completed":
+      case "history":
         return renderHistoryCheckStatus(check);
       default:
         return null;
@@ -396,7 +554,7 @@ export default function TradeTable() {
   return (
     <div className="space-y-4">
       <Tabs
-        defaultValue="Pending"
+        defaultValue="active"
         className="w-full"
         onValueChange={(value) => {
           setSelectedSection(value);
@@ -406,26 +564,33 @@ export default function TradeTable() {
         }}
       >
         <TabsList className="grid max-w-[50vw] mt-2 mb-6 h-10 py-0 w-full grid-cols-3 gap-3">
-          <TabsTrigger value="Pending">Active</TabsTrigger>
-          <TabsTrigger value="Failed">Pending</TabsTrigger>
-          <TabsTrigger value="Completed">History</TabsTrigger>
+          <TabsTrigger value="active">Active</TabsTrigger>
+          <TabsTrigger value="pending">Pending</TabsTrigger>
+          <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
-        {["Pending", "Failed", "Completed"].map((status) => (
+        {["active", "pending", "history"].map((status) => (
           <TabsContent key={status} value={status}>
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[100px]">Actions</TableHead>
+                    {/* id: string, counterparty_1: string, counterparty_2: string,
+                    securityType: string, tradeType: string, // Changed 'side'
+                    to 'tradeType' price: number, timestamp: string, currency:
+                    string, tradeHistory: string, tradeFrequency: string,
+                    marketLiquidity: string, marketVolatility: string, status:
+                    string, quantity?: number */}
                     <TableHead>Trade ID</TableHead>
                     <TableHead>TRADE QUANTITY</TableHead>
                     <TableHead>PRICE</TableHead>
                     <TableHead>COUNTERPARTY_1</TableHead>
                     <TableHead>COUNTERPARTY_2</TableHead>
-                    <TableHead>EXECUTION TIME</TableHead>
+                    <TableHead>TIMESTAMP</TableHead>
                     <TableHead>INSTRUMENT TYPE</TableHead>
                     <TableHead>CURRENCY</TableHead>
-                    <TableHead>RISK SCORE</TableHead>
+                    <TableHead>MARKET LIQUIDITY</TableHead>
+                    <TableHead>MARKET VOLITALITY</TableHead>
                     <TableHead>BUY/SELL</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -460,12 +625,13 @@ export default function TradeTable() {
                             <TableCell>{trade.counterparty_1}</TableCell>
                             <TableCell>{trade.counterparty_2}</TableCell>
                             <TableCell>
-                              {new Date(trade.execution_time).toLocaleString()}
+                              {new Date(trade.timestamp).toLocaleString()}
                             </TableCell>
-                            <TableCell>{trade.instrumentType}</TableCell>
+                            <TableCell>{trade.securityType}</TableCell>
                             <TableCell>{trade.currency}</TableCell>
-                            <TableCell>{trade.riskScore}</TableCell>
-                            <TableCell>{trade.buy_sell}</TableCell>
+                            <TableCell>{trade.marketLiquidity}</TableCell>
+                            <TableCell>{trade.marketVolatility}</TableCell>
+                            <TableCell>{trade.tradeType}</TableCell>
                           </TableRow>
                         );
                       })}
@@ -513,7 +679,7 @@ export default function TradeTable() {
               ))}
             </Accordion>
           </div>
-          {selectedSection === "Pending" && (
+          {selectedSection === "active" && (
             <div className="mt-4 gap-4 flex justify-end">
               <Button
                 onClick={handleSubmitApproval}

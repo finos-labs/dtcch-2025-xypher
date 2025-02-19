@@ -1,19 +1,18 @@
 // types.ts
 
 export type Trade = {
-  id: string;
-  quantity: number;
-  price: number;
-  counterparty_1: string;
-  counterparty_2: string;
-  execution_time?: string;
-  instrumentType?: string;
-  currency?: string;
-  riskScore?: number;
-  buy_sell?: string;
-  status?: string;
+  id: string,
+    counterparty_1: string,
+    counterparty_2: string,
+    securityType: string,
+    tradeType: string, // Changed 'side' to 'tradeType'
+    price: number,
+    timestamp: string,
+    currency: string,
+    tradeHistory: string,
+    tradeFrequency: string,
+    marketLiquidity: string,
+    marketVolatility: string,
+    status: string,
+    quantity?: number
 };
-export type flaggedTrade = Trade & {
-  quantity: number;
-};
-
